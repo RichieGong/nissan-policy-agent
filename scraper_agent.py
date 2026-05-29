@@ -3,7 +3,7 @@ import hashlib
 from typing import Optional
 from pydantic import BaseModel, Field
 from playwright.sync_api import sync_playwright
-import google.generativeai as genai
+import requests
 from supabase import create_client, Client
 
 # =====================================================================
@@ -87,29 +87,29 @@ def check_for_changes(url: str, current_text: str) -> Optional[str]:
 
 
 def analyze_with_gemini(raw_text: str) -> SupplyChainInsight:
-    """Passes the raw text delta to Gemini, enforcing a structured JSON response."""
-    print("[3/4] Invoking Gemini Supply Chain Agent...")
+    print("[3/4] Invoking Gemini Supply Chain Agent via REST API...")
+    
+    api_key = os.environ.get("GEMINI_API_KEY")
+    # Using the stable Gemini 1.5 Flash endpoint
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
     
     prompt = (
-        "You are an expert automotive supply chain intelligence agent tracking documents for Nissan.\n"
-        "Analyze the following text scraped from an industry monitoring node. Extract the changes and structured markers.\n"
-        "Focus on evaluating indicators related to: Tariffs, EV evolution, inventory shortages, pricing shifts, "
-        "or structural market disruptions (layoffs, bankruptcies).\n\n"
+        "You are an expert automotive supply chain intelligence agent. "
+        "Analyze the text below. Extract changes and return ONLY raw JSON matching the SupplyChainInsight schema.\n\n"
         f"RAW TEXT:\n{raw_text}"
     )
-
-    response = ai_client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=SupplyChainInsight,
-            temperature=0.1  # Deterministic analysis
-        )
-    )
     
-    # Parse output straight into our validated structure
-    return SupplyChainInsight.model_validate_json(response.text)
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"responseMimeType": "application/json", "temperature": 0.1}
+    }
+    
+    response = requests.post(url, json=payload)
+    response_data = response.json()
+    
+    # Extract the text and parse it into your Pydantic model
+    text_content = response_data['candidates'][0]['content']['parts'][0]['text']
+    return SupplyChainInsight.model_validate_json(text_content)
 
 
 def save_to_cloud(insight: SupplyChainInsight, raw_text: str):
