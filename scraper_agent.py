@@ -3,8 +3,7 @@ import hashlib
 from typing import Optional
 from pydantic import BaseModel, Field
 from playwright.sync_api import sync_playwright
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 from supabase import create_client, Client
 
 # =====================================================================
@@ -20,7 +19,8 @@ if not all([SUPABASE_URL, SUPABASE_KEY, GEMINI_API_KEY]):
 
 # Initialize Cloud Clients
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-ai_client = genai.Client(api_key=GEMINI_API_KEY)
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 # =====================================================================
 # 2. DATA SCHEMA DEFINITION (Pydantic)
