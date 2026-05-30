@@ -1,27 +1,21 @@
-import streamlit as st
-import google.generativeai as genai
 import os
 import hashlib
+import streamlit as st  # Make sure this is imported
+import google.generativeai as genai # Make sure this is imported
 from typing import Optional
 from pydantic import BaseModel, Field
 from playwright.sync_api import sync_playwright
 import requests
 from supabase import create_client, Client
 
-# =====================================================================
-# 1. ENVIRONMENT CONFIGURATION
-# =====================================================================
-# Ensure these secrets are set in your GitHub Actions environment or local .env file
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+# Use st.secrets instead of os.environ
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
-if not all([SUPABASE_URL, SUPABASE_KEY, GEMINI_API_KEY]):
-    raise ValueError("Missing mandatory environment variables. Please check your secrets configuration.")
-
-# Initialize Cloud Clients
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+# Initialize Clients
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 # =====================================================================
