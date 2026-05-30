@@ -1,7 +1,6 @@
 import os
 import hashlib
-import streamlit as st  # Make sure this is imported
-import google.generativeai as genai # Make sure this is imported
+
 from typing import Optional
 from pydantic import BaseModel, Field
 from playwright.sync_api import sync_playwright
