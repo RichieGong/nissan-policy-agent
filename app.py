@@ -51,11 +51,11 @@ except Exception as e:
 def get_chronological_updates():
     try:
         response = (
-            supabase
-            .from_("policy_updates")
-            .select("*")
-            .limit(100)
-            .execute()
+        supabase
+        .from_("policy_updates")
+        .select("*")
+        .order("created_at", desc=True)
+        .execute()
         )
         return response.data
     except Exception as e:
