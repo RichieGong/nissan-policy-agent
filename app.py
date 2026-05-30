@@ -51,11 +51,11 @@ except Exception as e:
 def get_chronological_updates():
     try:
         response = (
-        supabase
-        .from_("policy_updates")
-        .select("*")
-        .order("created_at", desc=True)
-        .execute()
+            supabase
+            .from_("policy_updates")
+            .select("*")
+            .order("created_at", ascending=False)
+            .execute()
         )
         return response.data
     except Exception as e:
@@ -94,7 +94,7 @@ else:
         # Format database timestamp safely for readability
         timestamp = record.get("created_at", "Unknown Time")
         # Clean up standard ISO string format (e.g., '2026-05-29T15:33:00' -> '2026-05-29 15:33')
-        readable_time = timestamp.replace("T", " ").split(".")[0]
+        readable_time = str(timestamp).replace("T", " ").split(".")[0]
 
         # Apply user filters
         if impact not in impact_filter:
