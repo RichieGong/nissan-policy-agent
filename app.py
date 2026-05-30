@@ -15,7 +15,7 @@ st.set_page_config(
 st.title("🚘 Nissan Supply Chain Intelligence")
 st.markdown(
     "Automated tracking system for global manufacturing nodes, trade policies, "
-    "and market trend data. *Updates automatically at 06:00 UTC.*"
+    "and market trend data. *Updates automatically every hour.*"
 )
 st.markdown("---")
 
