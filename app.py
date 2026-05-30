@@ -80,7 +80,7 @@ search_query = st.sidebar.text_input("Search Content Keywords:", "").strip().low
 
 # Process data display loop
 if not records:
-    st.info("No policy logs found in the database yet. Wait for the morning scraper run!")
+    st.info("No policy logs found in the database yet. Waiting for scraping runs!")
 else:
     visible_count = 0
     
