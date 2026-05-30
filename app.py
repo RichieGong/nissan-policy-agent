@@ -54,7 +54,7 @@ def get_chronological_updates():
             supabase
             .from_("policy_updates")
             .select("*")
-            .order("created_at", ascending=False)
+            .order("created_at", desc=True)
             .execute()
         )
         return response.data
