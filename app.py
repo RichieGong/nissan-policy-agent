@@ -50,10 +50,13 @@ except Exception as e:
 # =====================================================================
 def get_chronological_updates():
     try:
-        response = supabase.table("policy_updates") \
-            .select("*") \
-            .order("created_at", desc=True) \
+        response = (
+            supabase
+            .from_("policy_updates")
+            .select("*")
+            .limit(100)
             .execute()
+        )
         return response.data
     except Exception as e:
         st.error(f"Database Read Error: {str(e)}")
