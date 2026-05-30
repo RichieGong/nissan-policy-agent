@@ -49,12 +49,11 @@ except Exception as e:
 # 3. DATA FETCHING LOGIC
 # =====================================================================
 def get_chronological_updates():
-    """Queries the database for policy records sorted descending (newest first)."""
     try:
-        response = supabase.table("policy_updates")\
-                           .select("*")\
-                           .order("created_at", descending=True)\
-                           .execute()
+        response = supabase.table("policy_updates") \
+            .select("*") \
+            .order("created_at", desc=True) \
+            .execute()
         return response.data
     except Exception as e:
         st.error(f"Database Read Error: {str(e)}")
